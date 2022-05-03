@@ -35,6 +35,7 @@ class App extends React.Component {
     })
 
     let accountBalance = creditSum - debitSum;
+    accountBalance = roundAccountBalance(accountBalance);
     this.setState({debits, credits, accountBalance});
   } 
 
@@ -57,6 +58,7 @@ class App extends React.Component {
     const newDebit = {description, amount, date}
     balance = balance - amount;
     debits = [...debits, newDebit]
+    balance = roundAccountBalance(balance);
     this.setState({debits: debits, accountBalance: balance})
   }
 
@@ -78,6 +80,7 @@ class App extends React.Component {
     const newCredit = {description, amount, date}
     balance = balance +  amount;
     credits = [...credits, newCredit]
+    balance = roundAccountBalance(balance);
     this.setState({credits: credits, accountBalance: balance})
   }
 
@@ -98,6 +101,22 @@ class App extends React.Component {
 
 }
 
+// Function used to concatonate and round the balance
+function roundAccountBalance(balance){
+  let balanceString = balance.toString();
+  let indexOfDecimel = balanceString.indexOf(".");
+  let afterDecimel = balanceString.substring(indexOfDecimel+1,indexOfDecimel+3);
+  let beforeDecimel = balanceString.substring(0,indexOfDecimel+1);
+  let roundCheck = balanceString[indexOfDecimel + 3];
+  let roundCheckInt = parseInt(roundCheck);
+  if(roundCheckInt>=5){
+    let afterDecimelInt = parseInt(afterDecimel);
+    afterDecimelInt++;
+    afterDecimel = afterDecimelInt.toString();
+  }
+  let newBalance = beforeDecimel + afterDecimel;
+  return newBalance;
+}
 
 function Home() {
   return (

@@ -35,6 +35,7 @@ class App extends React.Component {
     })
 
     let accountBalance = creditSum - debitSum;
+    accountBalance = roundAccountBalance(accountBalance);
     this.setState({debits, credits, accountBalance});
   } 
 
@@ -57,6 +58,7 @@ class App extends React.Component {
     const newDebit = {description, amount, date}
     balance = balance - amount;
     debits = [...debits, newDebit]
+    balance = roundAccountBalance(balance);
     this.setState({debits: debits, accountBalance: balance})
   }
 
@@ -78,19 +80,27 @@ class App extends React.Component {
     const newCredit = {description, amount, date}
     balance = balance +  amount;
     credits = [...credits, newCredit]
+    balance = roundAccountBalance(balance);
     this.setState({credits: credits, accountBalance: balance})
   }
 
   render() {
     return (
-      <div className="App">
+      <div className="App" style = {{backgroundColor:"beige", 
+                                     width: "500px", 
+                                     marginLeft:"auto",
+                                     marginRight:"auto",
+                                     borderRadius: "10%",
+                                     border:"black solid",
+                                     marginTop:"50px",
+                                     }}>
         <h1>Welcome to React Router!</h1>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/debits" element={<Debits addDebit={this.addDebit} debits={this.state.debits} />} />
           <Route path="/credits" element={<Credits addCredit={this.addCredit} credits={this.state.credits} />} />
         </Routes>
-        <h3>{this.state.accountBalance}</h3>
+        <h3>Balance: {this.state.accountBalance}</h3>
       </div>
     );
   }
@@ -98,13 +108,47 @@ class App extends React.Component {
 
 }
 
+// Function used to concatonate and round the balance
+function roundAccountBalance(balance){
+  let balanceString = balance.toString();
+  let indexOfDecimel = balanceString.indexOf(".");
+  let afterDecimel = balanceString.substring(indexOfDecimel+1,indexOfDecimel+3);
+  let beforeDecimel = balanceString.substring(0,indexOfDecimel+1);
+  let roundCheck = balanceString[indexOfDecimel + 3];
+  let roundCheckInt = parseInt(roundCheck);
+  if(roundCheckInt>=5){
+    let afterDecimelInt = parseInt(afterDecimel);
+    afterDecimelInt++;
+    afterDecimel = afterDecimelInt.toString();
+  }
+  let newBalance = beforeDecimel + afterDecimel;
+  return newBalance;
+}
 
 function Home() {
   return (
     <div>
-      <h2>Welcome to the homepage!</h2>
-      <Link to="/debits">Debits</Link>
-      <Link to="/credits">Credits</Link>
+      <h1>Homepage</h1>
+      <div style = {{borderRadius:"5%", 
+                          backgroundColor:"beige", 
+                          width: "70px",
+                          marginLeft:"auto",
+                          marginRight:"auto",
+                          marginTop:"10px",
+                          border: "black solid",
+                          }}>
+             <Link to="/Debits" style = {{color: "black", textDecoration: "none", fontSize: "20px"}}>Debits</Link>
+           </div>
+           <div style = {{borderRadius:"5%", 
+                          backgroundColor:"beige", 
+                          width: "70px",
+                          marginLeft:"auto",
+                          marginRight:"auto",
+                          marginTop:"10px",
+                          border: "black solid",
+                          }}>
+             <Link to="/Credits" style = {{color: "black", textDecoration: "none", fontSize: "20px"}}>Credits</Link>
+           </div>
     </div>
   );
 }
